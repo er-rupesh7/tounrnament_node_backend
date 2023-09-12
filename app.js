@@ -1,24 +1,36 @@
 const db = require('./src/system');
 const mysql = require("mysql2");
+const express = require("express");
+
+const app = express();
+
 const pool = mysql.createPool({
     host: db.db_host,
     user: db.db_username,
     password: db.db_pwd,
     database: db.db_name,
-    connectionLimit: 10, // Adjust the limit as per your requirements
-});
-
-pool.query('SELECT * FROM users where username="champion"', (err, results) => {
-    if (err) {
-        console.error('Error executing query:', err);
-        return;
-    }
-    console.log('Query results:', results);
+    connectionLimit: 10,
 });
 
 // Handle errors
 pool.on('error', (err) => {
     console.error('MySQL Pool Error:', err);
+});
+
+pool.query('SELECT * FROM users', (err, results) => {
+    if (err) {
+        console.error('Error executing query:', err);
+        return;
+    }
+    
+    // Move your Express route handling code here
+    app.get('/', (req, res) => {
+        res.send(results); // Send the results as the response
+    });
+    
+    app.listen(3000, () => {
+        console.log('Server is running on port 3000');
+    });
 });
 
 // Close the pool gracefully when your application exits
@@ -30,6 +42,3 @@ process.on('SIGINT', () => {
         process.exit(0);
     });
 });
-
-
-// console.log(db)
