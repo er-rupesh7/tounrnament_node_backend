@@ -1,6 +1,7 @@
 const db = require('./src/system');
 const mysql = require("mysql2");
 const express = require("express");
+const port = process.env.PORT || 3000;
 
 const app = express();
 
@@ -28,7 +29,7 @@ pool.query('SELECT * FROM users', (err, results) => {
         res.send(results); // Send the results as the response
     });
     
-    app.listen(3000, () => {
+    app.listen(port, () => {
         console.log('Server is running on port 3000');
     });
 });
